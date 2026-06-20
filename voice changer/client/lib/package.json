@@ -23,7 +23,7 @@
     "keywords": [
         "voice conversion"
     ],
-    "author": "wataru.okada@flect.co.jp",
+    "author": "ferisooo",
     "license": "ISC",
     "devDependencies": {
         "@types/audioworklet": "^0.0.52",

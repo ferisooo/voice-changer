@@ -18,7 +18,7 @@
     "keywords": [
         "voice conversion"
     ],
-    "author": "wataru.okada@flect.co.jp",
+    "author": "ferisooo",
     "license": "ISC",
     "devDependencies": {
         "@babel/core": "^7.23.5",
