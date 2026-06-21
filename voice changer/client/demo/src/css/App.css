@@ -1889,6 +1889,92 @@ audio::-webkit-media-controls-overlay-enclosure{
     animation: blinking 0.8s ease-in-out infinite alternate;
 }
 
+/* ---- Equalizer ---- */
+.eq-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 1rem;
+    padding-top: 6px;
+}
+.eq-bands {
+    display: flex;
+    flex-direction: row;
+    gap: 0.6rem;
+}
+.eq-band {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 2.2rem;
+    gap: 2px;
+}
+.eq-band-slider {
+    writing-mode: vertical-lr;
+    direction: rtl;
+    -webkit-appearance: slider-vertical;
+    appearance: slider-vertical;
+    width: 8px;
+    height: 90px;
+    cursor: pointer;
+    accent-color: #d86a9c;
+}
+.eq-band-label {
+    font-size: 0.7rem;
+    color: #ccc;
+}
+.eq-band-val {
+    font-size: 0.65rem;
+    color: #aaa;
+    min-height: 0.8rem;
+}
+.eq-knobs {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: flex-end;
+}
+.eq-knob {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    user-select: none;
+}
+.eq-knob-dial {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, #555, #2a2a2a 70%);
+    border: 2px solid #888;
+    cursor: ns-resize;
+    touch-action: none;
+}
+.eq-knob-dial:hover {
+    border-color: #faa;
+}
+.eq-knob-indicator {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 3px;
+    height: 18px;
+    margin-left: -1.5px;
+    margin-top: -18px;
+    transform-origin: 50% 100%;
+    border-radius: 2px;
+    background: #d86a9c;
+}
+.eq-knob-label {
+    font-size: 0.7rem;
+    color: #ccc;
+}
+.eq-knob-val {
+    font-size: 0.65rem;
+    color: #aaa;
+}
+
 @keyframes blinking {
     0% {
         opacity: 0;

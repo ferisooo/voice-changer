@@ -35,6 +35,10 @@
 >   the audio buffer on the fly to reduce stutter while keeping latency low.
 > - **Background noise cleanup** — one click enables the browser's built-in
 >   noise suppression on your mic.
+> - **Equalizer** — a 5-band graphic EQ with ready-made presets (Bass Boost,
+>   Vocal Boost, Bright, Warm, Kawaii…) plus two knobs for quick bass and vocal
+>   boosts. Shapes the converted voice and works for browser, server-audio, and
+>   recorded output.
 > - **Extra Controls panel** — a single tidy on-screen grid (with hover
 >   tooltips) for the above plus quality tweaks (breath detail, de-ess,
 >   leveling, formant, word-tail, input gate).

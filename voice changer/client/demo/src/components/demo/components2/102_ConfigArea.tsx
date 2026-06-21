@@ -4,6 +4,7 @@ import { ConvertArea } from "./102-2_ConvertArea"
 import { DeviceArea } from "./102-3_DeviceArea"
 import { RecorderArea } from "./102-4_RecorderArea"
 import { MoreActionArea } from "./102-5_MoreActionArea"
+import { EqualizerArea } from "./102-6_EqualizerArea"
 
 export type ConfigAreaProps = {
     detectors: string[]
@@ -22,6 +23,9 @@ export const ConfigArea = (props: ConfigAreaProps) => {
                 <div className="config-area">
                     <DeviceArea></DeviceArea>
                     <RecorderArea></RecorderArea>
+                </div>
+                <div className="config-area">
+                    <EqualizerArea></EqualizerArea>
                 </div>
                 <div className="config-area">
                     <MoreActionArea></MoreActionArea>

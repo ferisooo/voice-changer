@@ -362,6 +362,12 @@ class VoiceChangerSettings:
     _deEss: int = 0         # tames harsh sss/shh sibilance
     _outputComp: int = 0    # evens out loudness + makeup gain + safety limiter
 
+    # Equalizer profile: a small JSON string describing the 5-band graphic EQ
+    # plus the bass/vocal boost knobs, e.g.
+    #   {"bands": [0, 0, 0, 0, 0], "bass": 0, "vocal": 0}
+    # Empty string ('') means a flat EQ (off). No audio is stored.
+    _eqProfile: str = ''
+
     @property
     def dstId(self):
         return self._dstId
@@ -521,3 +527,11 @@ class VoiceChangerSettings:
     @outputComp.setter
     def outputComp(self, val: str):
         self._outputComp = int(val)
+
+    @property
+    def eqProfile(self):
+        return self._eqProfile
+
+    @eqProfile.setter
+    def eqProfile(self, val: str):
+        self._eqProfile = str(val) if val is not None else ''

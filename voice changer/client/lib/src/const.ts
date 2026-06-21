@@ -105,6 +105,8 @@ export const ServerSettingKey = {
     silenceFront: "silenceFront",
     modelSlotIndex: "modelSlotIndex",
 
+    eqProfile: "eqProfile",
+
     inputSampleRate: "inputSampleRate",
 } as const;
 export type ServerSettingKey = (typeof ServerSettingKey)[keyof typeof ServerSettingKey];
@@ -153,6 +155,8 @@ export type VoiceChangerServerSetting = {
     disableJit: number; // 0:off, 1:on
     modelSamplingRate: ModelSamplingRate; // 32000,40000,48000
     modelSlotIndex: number;
+
+    eqProfile: string; // JSON: { bands: number[5] (dB), bass: number, vocal: number }; "" = flat/off
 
     inputSampleRate: InputSampleRate;
 };
@@ -285,6 +289,7 @@ export const DefaultServerSetting: ServerInfo = {
     forceFp32: 0,
     disableJit: 0,
     modelSlotIndex: 0,
+    eqProfile: "",
     sampleModels: [],
     gpus: [],
 

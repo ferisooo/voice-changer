@@ -186,9 +186,9 @@ class VoiceChangerV2:
 
         out = audio[: block_size].detach().cpu().numpy()
 
-        # Optional output DSP (de-esser + compressor). Isolated: passes through
-        # unchanged on any error. Both off (0) by default.
-        out = self.output_fx.process(out, self.settings.outputSampleRate, self.settings.deEss, self.settings.outputComp)
+        # Optional output DSP (de-esser + equalizer + compressor). Isolated:
+        # passes through unchanged on any error. All off by default.
+        out = self.output_fx.process(out, self.settings.outputSampleRate, self.settings.deEss, self.settings.outputComp, self.settings.eqProfile)
 
         return out, vol
 
