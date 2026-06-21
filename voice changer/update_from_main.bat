@@ -16,7 +16,7 @@ REM ============================================================
 setlocal
 cd /d "%~dp0"
 
-set "REPO=https://github.com/ferisooo/voice-changer.git"
+set "REPO=https://github.com/ferisooo/Kawaii-Voice-Changer.git"
 set "TMP=%TEMP%\vc_update_repo"
 
 REM --- 1. Make sure Git is installed -------------------------
