@@ -64,7 +64,13 @@ def list_audio_device():
         # hardware that is connected right now. Guarded so a failure here can't
         # break enumeration entirely.
         try:
-            sd._terminate()
+            # _terminate() fails if PortAudio was never initialized; ignore that
+            # so _initialize() below always runs and leaves PortAudio in a good
+            # state with a freshly scanned device list.
+            try:
+                sd._terminate()
+            except Exception:  # NOQA
+                pass
             sd._initialize()
         except Exception as e:  # NOQA
             logger.warning(f"[list_audio_device] could not refresh PortAudio device list: {e}")
