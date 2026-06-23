@@ -57,24 +57,6 @@ def checkSamplingRate(deviceId: int, desiredSamplingRate: int, type: ServerAudio
 
 def list_audio_device():
     try:
-        # PortAudio snapshots the device list when it initializes, so devices
-        # plugged in or swapped after server startup never show up on a plain
-        # re-query (sd.query_devices() just returns the cached snapshot). Force
-        # PortAudio to terminate and re-initialize so the scan reflects the
-        # hardware that is connected right now. Guarded so a failure here can't
-        # break enumeration entirely.
-        try:
-            # _terminate() fails if PortAudio was never initialized; ignore that
-            # so _initialize() below always runs and leaves PortAudio in a good
-            # state with a freshly scanned device list.
-            try:
-                sd._terminate()
-            except Exception:  # NOQA
-                pass
-            sd._initialize()
-        except Exception as e:  # NOQA
-            logger.warning(f"[list_audio_device] could not refresh PortAudio device list: {e}")
-
         audioDeviceList = sd.query_devices()
     except Exception as e:
         logger.exception(e)
@@ -106,7 +88,5 @@ def list_audio_device():
             default_samplerate=d["default_samplerate"],
         )
         serverAudioOutputDevices.append(serverOutputAudioDevice)
-
-    logger.info(f"[list_audio_device] inputs: {[(d.hostAPI, d.name) for d in serverAudioInputDevices]}")
 
     return serverAudioInputDevices, serverAudioOutputDevices
