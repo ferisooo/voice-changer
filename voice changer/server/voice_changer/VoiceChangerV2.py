@@ -123,7 +123,7 @@ class VoiceChangerV2:
 
         if self.vcmodel is not None:
             self.vcmodel.update_settings(key, val, old_val)
-            if key in {'gpu', 'serverReadChunkSize', 'extraConvertSize', 'crossFadeOverlapSize', 'silenceFront', 'forceFp32'}:
+            if key in {'gpu', 'serverReadChunkSize', 'extraConvertSize', 'crossFadeOverlapSize', 'silenceFront', 'forceFp32', 'hqBuffers'}:
                 self.vcmodel.realloc(self.block_frame, self.extra_frame, self.crossfade_frame, self.sola_search_frame)
 
 

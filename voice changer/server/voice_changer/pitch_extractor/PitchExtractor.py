@@ -13,6 +13,11 @@ class PitchExtractor(Protocol):
     ) -> torch.Tensor:
         ...
 
+    def set_threshold(self, value: float):
+        # Voiced/unvoiced confidence cutoff. Only meaningful for detectors that
+        # expose one (RMVPE); a no-op elsewhere.
+        ...
+
     def getPitchExtractorInfo(self):
         return {
             "pitchExtractorType": self.type,

@@ -251,6 +251,27 @@
     asC.wrap.appendChild(asBtn); asC.wrap.appendChild(asRead);
     add(asC.wrap);
 
+    // === Row 6: Pitch quality controls (EXPERIMENTAL, default OFF) =======
+    // Each is independent so a problem can be isolated to one switch. If audio
+    // ever goes silent after enabling one, turn it back off.
+    var hqC = cell('Pitch HQ (beta)', 'EXPERIMENTAL, default OFF. Runs pitch detection in full precision (fp32) even in fast/half mode. May steady pitch — but on some GPUs it can cause silence; turn back off if so.');
+    var hqBtn = makeToggle(false);
+    hqBtn.onclick = function () { hqBtn.setOn(!hqBtn._on); post('f0Fp32', hqBtn._on ? 1 : 0); };
+    hqC.wrap.appendChild(hqBtn); add(hqC.wrap);
+
+    var smC = cell('Pitch smooth (beta)', 'EXPERIMENTAL, default OFF. Removes single-frame pitch spikes / octave cracks while keeping natural intonation.');
+    var smBtn = makeToggle(false);
+    smBtn.onclick = function () { smBtn.setOn(!smBtn._on); post('f0Smoothing', smBtn._on ? 1 : 0); };
+    smC.wrap.appendChild(smBtn); add(smC.wrap);
+
+    var hbC = cell('HQ buffers (beta)', 'EXPERIMENTAL, default OFF. Keeps the internal audio buffers in full precision for a more accurate mic gate and quieter-detail capture.');
+    var hbBtn = makeToggle(false);
+    hbBtn.onclick = function () { hbBtn.setOn(!hbBtn._on); post('hqBuffers', hbBtn._on ? 1 : 0); };
+    hbC.wrap.appendChild(hbBtn); add(hbC.wrap);
+
+    var thSc = sliderCell('Voice gate', 'How sure the detector must be that a sound is your voice (RMVPE). Higher = rejects more noise on noisy mics; lower = catches softer voicing. 0.05 = stock.', 0.01, 0.30, 0.01, 0.05,
+      function (v) { return Number(v).toFixed(2); }, 'f0Threshold');
+
     document.body.appendChild(panel);
 
     // --- Collapse / expand ---
@@ -277,6 +298,10 @@
       if (typeof info.deEss !== 'undefined') { dzSc.slider.value = info.deEss; dzSc.show(); }
       if (typeof info.outputComp !== 'undefined') { lvSc.slider.value = info.outputComp; lvSc.show(); }
       if (typeof info.formantShift !== 'undefined') { fmSc.slider.value = info.formantShift; fmSc.show(); }
+      if (typeof info.f0Fp32 !== 'undefined') hqBtn.setOn(Number(info.f0Fp32) === 1);
+      if (typeof info.f0Smoothing !== 'undefined') smBtn.setOn(Number(info.f0Smoothing) === 1);
+      if (typeof info.hqBuffers !== 'undefined') hbBtn.setOn(Number(info.hqBuffers) === 1);
+      if (typeof info.f0Threshold !== 'undefined') { thSc.slider.value = info.f0Threshold; thSc.show(); }
     }).catch(function () {});
     fetch('/calibrate_status').then(function (r) { return r.json(); }).then(calLabel).catch(function () {});
 

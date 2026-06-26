@@ -12,7 +12,11 @@ class RMVPEPitchExtractor(PitchExtractor):
         self.type: PitchExtractorType = "rmvpe"
 
         device_manager = DeviceManager.get_instance()
-        self.rmvpe = RMVPE(model_path=file, is_half=device_manager.use_fp16(), use_jit_compile=device_manager.use_jit_compile(), device=device_manager.device)
+        self.rmvpe = RMVPE(model_path=file, is_half=device_manager.use_fp16_for_f0(), use_jit_compile=device_manager.use_jit_compile(), device=device_manager.device)
+        self.threshold = 0.05
+
+    def set_threshold(self, value: float):
+        self.threshold = float(value)
 
     def extract(
         self,
@@ -20,4 +24,4 @@ class RMVPEPitchExtractor(PitchExtractor):
         sr: int,
         window: int,
     ) -> torch.Tensor:
-        return self.rmvpe.infer_from_audio_t(audio).squeeze()
+        return self.rmvpe.infer_from_audio_t(audio, self.threshold).squeeze()

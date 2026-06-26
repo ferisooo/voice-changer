@@ -63,6 +63,7 @@ class VoiceChangerManager(ServerAudioCallbacks):
         self.device_manager = DeviceManager.get_instance()
         self.devices = self.device_manager.list_devices()
         self.device_manager.initialize(self.settings.gpu, self.settings.forceFp32, self.settings.disableJit)
+        self.device_manager.set_force_f0_fp32(bool(self.settings.f0Fp32))
 
         self.vc = VoiceChangerV2(self.settings)
         self.server_audio = ServerAudio(self, self.settings)
@@ -228,6 +229,10 @@ class VoiceChangerManager(ServerAudioCallbacks):
             self.device_manager.set_device(val)
         elif key == 'forceFp32':
             self.device_manager.set_force_fp32(val)
+        elif key == 'f0Fp32':
+            # Update the device flag before vc.update_settings rebuilds the
+            # pitch detector with the new precision.
+            self.device_manager.set_force_f0_fp32(bool(val))
         elif key == 'disableJit':
             self.device_manager.set_disable_jit(val)
         # FIXME: This is a very counter-intuitive handling of audio modes...

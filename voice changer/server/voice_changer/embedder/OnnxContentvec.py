@@ -30,6 +30,10 @@ class OnnxContentvec(Embedder):
     def extract_features(
         self, feats: torch.Tensor, embOutputLayer=9, useFinalProj=True
     ) -> torch.Tensor:
+        # The audio history is kept in fp32 for precision; cast to the embedder's
+        # compute dtype here. On CUDA the input is bound by raw pointer, so the
+        # dtype must match exactly (no-op when already correct).
+        feats = feats.to(self.fp_dtype_t)
         if feats.device.type == 'cuda':
             binding = self.onnx_session.io_binding()
 

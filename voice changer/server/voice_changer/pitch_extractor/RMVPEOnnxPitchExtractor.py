@@ -15,7 +15,7 @@ class RMVPEOnnxPitchExtractor(PitchExtractor):
         self.type: PitchExtractorType = "rmvpe_onnx"
 
         device_manager = DeviceManager.get_instance()
-        self.is_half = device_manager.use_fp16()
+        self.is_half = device_manager.use_fp16_for_f0()
         (
             onnxProviders,
             onnxProviderOptions,
@@ -27,6 +27,9 @@ class RMVPEOnnxPitchExtractor(PitchExtractor):
         self.fp_dtype_np = np.float16 if self.is_half else np.float32
 
         self.threshold = np.array(0.05, dtype=self.fp_dtype_np)
+
+    def set_threshold(self, value: float):
+        self.threshold = np.array(value, dtype=self.fp_dtype_np)
 
         so = onnxruntime.SessionOptions()
         # so.log_severity_level = 3

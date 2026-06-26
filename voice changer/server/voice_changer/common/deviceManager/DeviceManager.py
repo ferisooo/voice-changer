@@ -47,6 +47,9 @@ class DeviceManager(object):
         self.dml_enabled: bool = torch_directml.is_available()
         self.fp16_available = False
         self.force_fp32 = False
+        # Opt-in: force the pitch (f0) detector to run in fp32 even when
+        # inference is fp16. Off by default (matches stock behavior).
+        self.force_f0_fp32 = False
         self.disable_jit = False
         self.lock = threading.Lock()
         logger.info('Initialized DeviceManager. Backend statuses:')
@@ -73,6 +76,11 @@ class DeviceManager(object):
 
     def use_fp16(self):
         return self.fp16_available and not self.force_fp32
+
+    def use_fp16_for_f0(self):
+        # fp16 for the pitch detector only when fp16 is otherwise in use AND the
+        # user has not asked to keep f0 in fp32.
+        return self.use_fp16() and not self.force_f0_fp32
 
     def use_jit_compile(self):
         # FIXME: DirectML backend seems to have issues with JIT. Disable it for now.
@@ -146,6 +154,13 @@ class DeviceManager(object):
         elif self.cuda_enabled:
             torch.cuda.empty_cache()
         self.force_fp32 = force_fp32
+
+    def set_force_f0_fp32(self, force_f0_fp32: bool):
+        if self.mps_enabled:
+            torch.mps.empty_cache()
+        elif self.cuda_enabled:
+            torch.cuda.empty_cache()
+        self.force_f0_fp32 = force_f0_fp32
 
     def is_int8_avalable(self):
         if self.device.type == 'cpu':

@@ -112,12 +112,31 @@ class Pipeline:
     def setPitchExtractor(self, pitchExtractor: PitchExtractor):
         self.pitchExtractor = pitchExtractor
 
-    def extract_pitch(self, audio: torch.Tensor, pitch: torch.Tensor | None, pitchf: torch.Tensor | None, f0_up_key: int, formant_shift: float, max_pitch: float = 0.0) -> tuple[torch.Tensor, torch.Tensor]:
+    def set_f0_threshold(self, value: float):
+        self.pitchExtractor.set_threshold(value)
+
+    def _guard_f0(self, f0: torch.Tensor) -> torch.Tensor:
+        """Suppress single-frame f0 spikes / octave cracks with a voiced-only
+        3-point median filter. Only frames whose immediate neighbours are *all*
+        voiced are smoothed, so voiced/unvoiced onsets and offsets are left
+        untouched and natural intonation is preserved."""
+        if f0.numel() < 3:
+            return f0
+        prev, cur, nxt = f0[:-2], f0[1:-1], f0[2:]
+        med = torch.median(torch.stack((prev, cur, nxt), dim=0), dim=0).values
+        mask = (prev > 0) & (cur > 0) & (nxt > 0)
+        out = f0.clone()
+        out[1:-1] = torch.where(mask, med, cur)
+        return out
+
+    def extract_pitch(self, audio: torch.Tensor, pitch: torch.Tensor | None, pitchf: torch.Tensor | None, f0_up_key: int, formant_shift: float, max_pitch: float = 0.0, f0_smoothing: bool = True) -> tuple[torch.Tensor, torch.Tensor]:
         f0 = self.pitchExtractor.extract(
             audio,
             HUBERT_SAMPLE_RATE,
             WINDOW_SIZE,
         )
+        if f0_smoothing:
+            f0 = self._guard_f0(f0)
         f0 *= 2 ** ((f0_up_key - formant_shift) / 12)
 
         # Scream/cough guard: cap how high the output pitch can go. Without this
@@ -137,10 +156,14 @@ class Pipeline:
 
         if pitch is not None and pitchf is not None:
             circular_write(f0_coarse, pitch)
+            # f0 may be fp32 (e.g. fp32 pitch detector) while the streaming
+            # buffer is the model dtype; the in-place write casts as needed.
             circular_write(f0, pitchf)
         else:
             pitch = f0_coarse
-            pitchf = f0
+            # No streaming buffer (file conversion): match the inferencer dtype
+            # explicitly, since the detector may have produced fp32.
+            pitchf = f0.to(self.dtype)
 
         return pitch.unsqueeze(0), pitchf.unsqueeze(0)
 
@@ -182,6 +205,7 @@ class Pipeline:
         return_length: int,
         protect: float = 0.5,
         max_pitch: float = 0.0,
+        f0_smoothing: bool = True,
     ) -> torch.Tensor:
         with Timer2("Pipeline-Exec", False) as t:  # NOQA
             # 16000のサンプリングレートで入ってきている。以降この世界は16000で処理。
@@ -192,7 +216,7 @@ class Pipeline:
             t.record("pre-process")
 
             # ピッチ検出
-            pitch, pitchf = self.extract_pitch(audio[silence_front:], pitch, pitchf, f0_up_key, formant_shift, max_pitch) if self.use_f0 else (None, None)
+            pitch, pitchf = self.extract_pitch(audio[silence_front:], pitch, pitchf, f0_up_key, formant_shift, max_pitch, f0_smoothing) if self.use_f0 else (None, None)
             t.record("extract-pitch")
 
             # embedding
