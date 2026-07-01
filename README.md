@@ -22,14 +22,7 @@ Comfort/stability features on top of the unchanged conversion engine:
 - **Extra Controls panel** — all tweaks in one grid with tooltips
 - **Two-PC launcher** — Windows `.bat` that auto-finds the host PC
 
-## Quick start (Windows)
-
-1. Check your GPU: Task Manager → Performance → GPU (Nvidia / AMD / Intel).
-2. Download from the [releases page](https://github.com/deiteris/voice-changer/releases):
-   Nvidia → the two `...cuda.zip.001/.002` files; AMD/Intel/none → `...dml.zip`.
-3. Unzip (e.g. [7-Zip](https://www.7-zip.org/)), open `MMVCServerSIO`, run `MMVCServerSIO.exe`.
-4. First run downloads dependencies, then opens in your browser.
-5. Pick mic + output, load a voice model, press **Start**, turn on **Auto Pitch**. 🎉
+## Setup
 
 For games/Discord/OBS you'll want a virtual audio cable like
 [VAC Lite](https://software.muzychenko.net/freeware/vac470lite.zip).
